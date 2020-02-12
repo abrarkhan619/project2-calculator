@@ -61,7 +61,7 @@
 }
 
 .equals {
-  width:200px;
+  width:100px;
   height: 100px;
   text-align: center;
   border-style: solid;
@@ -70,12 +70,12 @@
   font-size: 30px;
 }
 
-.display {
+/* .display {
   height: 50px;
   margin-top: 0;
 }
 
 .answer {
   margin-bottom: 0;
-}
+} */
 

@@ -1,85 +1,122 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './App.css';
+// import { wait } from '@testing-library/react';
 
-class App extends Component {
+class App extends React.Component {
   state = {
-    firstValues: '',
-    currentOperator: '',
-    secondValues: '',
-    result: "",
-    displayValue: ""
+    value: null,
+    displayValue: '0',
+    waitingForOperand: false,
+    operator: null
   }
 
-  numValue = (number) => {
-    if (this.state.firstValues === '') {
+  inputDigit = (digit) => {
+    const {displayValue, waitingForOperand} = this.state
+
+    if (waitingForOperand) {
       this.setState({
-        firstValues: this.state.firstValues + [number]
+        displayValue: String(digit),
+        waitingForOperand: false
       })
     } else {
       this.setState({
-        secondValues: this.state.secondValues + [number]
+        displayValue: displayValue === '0'? String(digit) : displayValue + digit
       })
     }
-
-    // this.setState({
-    //   firstValues: this.state.firstValues + [number]
-    // })
-    console.log(this.state.secondValues);
   }
 
-  useOperator = (operator) => {
+  inputDot = () => {
+    const {displayValue, waitingForOperand} = this.state
+
+    if (waitingForOperand) {
+      this.setState({
+        displayValue: '.',
+        waitingForOperand: false
+      })
+    } else if (displayValue.indexOf('.') === -1)
+      this.setState({
+        displayValue: displayValue + '.',
+        waitingForOperand: false
+      })
+  }
+
+  clearDisplay = () => {
     this.setState({
-      currentOperator: [operator]
+      displayValue: '0'
     })
   }
 
-  // display = () => {
-  //   this.setState({
-  //     display: [firstValues] + [operator]
-  //   })
-  // }
+  performOperation = (nextOperator) => {
+    const {displayValue, operator, value} = this.state
 
-  // getAnswer = () => {
-    
-  // }
+    const nextValue = parseFloat(displayValue)
 
-  // storeValue = (value) => {
-  //   if (vlaue  )
-  // }
+    const operations = {
+      '/': (prevValue, nextValue) => prevValue / nextValue,
+      '*': (prevValue, nextValue) => prevValue * nextValue,
+      '+': (prevValue, nextValue) => prevValue + nextValue,
+      '-': (prevValue, nextValue) => prevValue - nextValue,
+      '=': (prevValue, nextValue) => nextValue,
+    }
 
+    if (value == null) {
+      this.setState({
+        value: nextValue
+      })
+    } else if (operator) {
+      const currentValue = value || 0
+      const computedValue = operations[operator](currentValue, nextValue)
+
+      this.setState({
+        value: computedValue,
+        displayValue: String(computedValue)
+      })
+    }
+
+    this.setState({
+      waitingForOperand: true,
+      operator: nextOperator
+    })
+  }
+
+// https://www.youtube.com/watch?v=ZtU7Mhf9vN8
+// 45 min
 
   render () {
+    const {displayValue} = this.state
+
     return(
       <div className="container">
         <div className="answerBox row1">
-          <h1 className="answer">0</h1>
-          <h2 className="display">{this.state.firstValues}</h2>
+          <h1 className="display">{displayValue}</h1>
+          {/* <h2 className="display">{this.state.firstValues}</h2> */}
         </div>
         <div className="row2 rows">
-          <button className="clearButton">Clear</button>
-          <button className="square method" onClick={() => this.useOperator("/")}>÷</button>
+          <button className="clearButton" onClick={() => this.clearDisplay()}>Clear</button>
+          <button className="square method" onClick={() => this.performOperation("/")}>÷</button>
         </div>
         <div className="row3 rows">
-          <button className="square" onClick={() => this.numValue(7)}>7</button>
-          <button className="square" onClick={() => this.numValue(8)}>8</button>
-          <button className="square" onClick={() => this.numValue(9)}>9</button>
-          <button className="square method" onClick={() => this.useOperator("*")}>×</button>
+          <button className="square" onClick={() => this.inputDigit(7)}>7</button>
+          <button className="square" onClick={() => this.inputDigit(8)}>8</button>
+          <button className="square" onClick={() => this.inputDigit(9)}>9</button>
+          <button className="square method" onClick={() => this.performOperation("*")}>×</button>
         </div>
         <div className="row4 rows">
-          <button className="square" onClick={() => this.numValue(4)}>4</button>
-          <button className="square" onClick={() => this.numValue(5)}>5</button>
-          <button className="square" onClick={() => this.numValue(6)}>6</button>
-          <button className="square method" onClick={() => this.useOperator("+")}>+</button>
+          <button className="square" onClick={() => this.inputDigit(4)}>4</button>
+          <button className="square" onClick={() => this.inputDigit(5)}>5</button>
+          <button className="square" onClick={() => this.inputDigit(6)}>6</button>
+          <button className="square method" onClick={() => this.performOperation("+")}>+</button>
         </div>
         <div className="row5 rows">
-          <button className="square" onClick={() => this.numValue(1)}>1</button>
-          <button className="square" onClick={() => this.numValue(2)}>2</button>
-          <button className="square" onClick={() => this.numValue(3)}>3</button>
-          <button className="square method" onClick={() => this.useOperator("-")}>-</button>
+          <button className="square" onClick={() => this.inputDigit(1)}>1</button>
+          <button className="square" onClick={() => this.inputDigit(2)}>2</button>
+          <button className="square" onClick={() => this.inputDigit(3)}>3</button>
+          <button className="square method" onClick={() => this.performOperation("-")}>-</button>
         </div>
         <div className="row6 rows">
-          <button className="zero" onClick={() => this.numValue(0)}>0</button>
-          <button className="equals method" onClick={() => this.useOperator("=")}>=</button>
+          <button className="zero" onClick={() => this.inputDigit(0)}>0</button>
+          <button className="square" onClick={() => this.inputDot()}>.</button>
+          <button className="equals method" onClick={() => this.performOperation("=")}>=</button>
         </div>
       </div>
     )

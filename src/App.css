@@ -70,3 +70,12 @@
   font-size: 30px;
 }
 
+.display {
+  height: 50px;
+  margin-top: 0;
+}
+
+.answer {
+  margin-bottom: 0;
+}
+

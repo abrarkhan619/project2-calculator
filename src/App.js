@@ -83,13 +83,12 @@ class App extends React.Component {
 // 45 min
 
   render () {
-    const {displayValue} = this.state
+    // const {displayValue} = this.state
 
     return(
       <div className="container">
         <div className="answerBox row1">
-          <h1 className="display">{displayValue}</h1>
-          {/* <h2 className="display">{this.state.firstValues}</h2> */}
+          <h1 className="display">{this.state.displayValue}</h1>
         </div>
         <div className="row2 rows">
           <button className="clearButton" onClick={() => this.clearDisplay()}>Clear</button>
